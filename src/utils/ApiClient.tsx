@@ -1,0 +1,1 @@
+export const api_url = "https://ashri-api.vercel.app/api";
