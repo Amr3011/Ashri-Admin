@@ -111,6 +111,8 @@ const AddProduct = () => {
         })),
       };
 
+      console.log("Sending payload:", JSON.stringify(payload, null, 2));
+
       const response = await fetch(`${api_url}/products`, {
         method: "POST",
         headers: {
@@ -120,16 +122,21 @@ const AddProduct = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to add product");
+        const errorData = await response.json();
+        console.error("Server error:", errorData);
+        throw new Error(errorData.message || "Failed to add product");
       }
 
       setAlert({ type: "success", message: "Product added successfully!" });
       setTimeout(() => {
         navigate("/");
       }, 1500);
-    } catch (error) {
+    } catch (error: any) {
       console.error(error);
-      setAlert({ type: "error", message: "Failed to add product" });
+      setAlert({
+        type: "error",
+        message: error.message || "Failed to add product",
+      });
     } finally {
       setLoading(false);
     }
