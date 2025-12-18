@@ -17,6 +17,7 @@ const EditProduct = () => {
     description: "",
     category: "",
     price: "",
+    oldPrice: "",
     imageUrls: [""],
     variants: [
       {
@@ -45,6 +46,7 @@ const EditProduct = () => {
         description: product.description,
         category: product.category,
         price: product.price.toString(),
+        oldPrice: product.oldPrice ? product.oldPrice.toString() : "",
         imageUrls: product.images.length > 0 ? product.images : [""],
         variants: product.variants.map((variant: any) => ({
           color: variant.color,
@@ -139,6 +141,7 @@ const EditProduct = () => {
         description: formData.description,
         category: formData.category,
         price: Number(formData.price),
+        oldPrice: formData.oldPrice ? Number(formData.oldPrice) : undefined,
         imageUrls: formData.imageUrls.filter((url) => url.trim() !== ""),
         variants: formData.variants.map((variant) => ({
           color: variant.color,
@@ -257,6 +260,19 @@ const EditProduct = () => {
               required
               value={formData.price}
               onChange={(e) => handleInputChange("price", e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Old Price (Optional)
+            </label>
+            <input
+              type="number"
+              value={formData.oldPrice}
+              onChange={(e) => handleInputChange("oldPrice", e.target.value)}
+              placeholder="Enter old price if discounted"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             />
           </div>
