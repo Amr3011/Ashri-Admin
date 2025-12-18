@@ -170,7 +170,7 @@ const EditProduct = () => {
         description: formData.description,
         category: formData.category,
         price: Number(formData.price),
-        oldPrice: formData.oldPrice ? Number(formData.oldPrice) : undefined,
+        oldPrice: formData.oldPrice ? Number(formData.oldPrice) : 0,
         isActive: formData.isActive,
         variants: formData.variants.map((variant) => ({
           color: variant.color,
@@ -306,22 +306,6 @@ const EditProduct = () => {
               placeholder="Enter old price if discounted"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             />
-          </div>
-
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="isActive"
-              checked={formData.isActive}
-              onChange={(e) => handleInputChange("isActive", e.target.checked)}
-              className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
-            />
-            <label
-              htmlFor="isActive"
-              className="ml-2 text-sm font-medium text-gray-700"
-            >
-              Product is Active
-            </label>
           </div>
 
           {/* Image URLs */}
