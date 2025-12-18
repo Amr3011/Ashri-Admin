@@ -18,6 +18,7 @@ const EditProduct = () => {
     category: "",
     price: "",
     oldPrice: "",
+    isActive: true,
     imageUrls: [""],
     variants: [
       {
@@ -26,6 +27,7 @@ const EditProduct = () => {
       },
     ],
   });
+  const [originalImages, setOriginalImages] = useState<string[]>([]);
 
   useEffect(() => {
     fetchProduct();
@@ -41,12 +43,14 @@ const EditProduct = () => {
       const result = await response.json();
       const product = result.data;
 
+      setOriginalImages(product.images || []);
       setFormData({
         name: product.name,
         description: product.description,
         category: product.category,
         price: product.price.toString(),
         oldPrice: product.oldPrice ? product.oldPrice.toString() : "",
+        isActive: product.isActive !== undefined ? product.isActive : true,
         imageUrls: product.images.length > 0 ? product.images : [""],
         variants: product.variants.map((variant: any) => ({
           color: variant.color,
@@ -79,6 +83,17 @@ const EditProduct = () => {
   };
 
   const removeImageUrl = (index: number) => {
+    // Don't allow removing if it's the last non-empty image
+    const nonEmptyImages = formData.imageUrls.filter(
+      (url) => url.trim() !== ""
+    );
+    if (nonEmptyImages.length <= 1) {
+      setAlert({
+        type: "error",
+        message: "Product must have at least one image",
+      });
+      return;
+    }
     const newImageUrls = formData.imageUrls.filter((_, i) => i !== index);
     setFormData({ ...formData, imageUrls: newImageUrls });
   };
@@ -136,13 +151,27 @@ const EditProduct = () => {
     setLoading(true);
 
     try {
+      const currentImages = formData.imageUrls.filter(
+        (url) => url.trim() !== ""
+      );
+
+      // الصور الجديدة فقط (مش موجودة في الصور الأصلية)
+      const newImages = currentImages.filter(
+        (img) => !originalImages.includes(img)
+      );
+
+      // الصور المحذوفة (موجودة في الأصلية ومش موجودة في الحالية)
+      const removeImages = originalImages.filter(
+        (img) => !currentImages.includes(img)
+      );
+
       const payload = {
         name: formData.name,
         description: formData.description,
         category: formData.category,
         price: Number(formData.price),
         oldPrice: formData.oldPrice ? Number(formData.oldPrice) : undefined,
-        imageUrls: formData.imageUrls.filter((url) => url.trim() !== ""),
+        isActive: formData.isActive,
         variants: formData.variants.map((variant) => ({
           color: variant.color,
           sizes: variant.sizes.map((size) => ({
@@ -150,6 +179,8 @@ const EditProduct = () => {
             quantity: Number(size.quantity),
           })),
         })),
+        imageUrls: newImages.length > 0 ? newImages : undefined,
+        removeImages: removeImages.length > 0 ? removeImages : undefined,
       };
 
       const response = await fetch(`${api_url}/products/${id}`, {
@@ -275,6 +306,22 @@ const EditProduct = () => {
               placeholder="Enter old price if discounted"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             />
+          </div>
+
+          <div className="flex items-center">
+            <input
+              type="checkbox"
+              id="isActive"
+              checked={formData.isActive}
+              onChange={(e) => handleInputChange("isActive", e.target.checked)}
+              className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
+            />
+            <label
+              htmlFor="isActive"
+              className="ml-2 text-sm font-medium text-gray-700"
+            >
+              Product is Active
+            </label>
           </div>
 
           {/* Image URLs */}
