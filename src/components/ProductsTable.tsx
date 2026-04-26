@@ -4,9 +4,10 @@ import { FaTrash, FaEdit } from "react-icons/fa";
 import { api_url } from "../utils/ApiClient";
 import Alert from "./Alert";
 import ConfirmDialog from "./ConfirmDialog";
+import type { Product, ProductsResponse } from "../types/product";
 
 const ProductsTable = () => {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -26,15 +27,39 @@ const ProductsTable = () => {
     try {
       setLoading(true);
       const response = await fetch(`${api_url}/products?page=${currentPage}`);
+
       if (!response.ok) {
-        throw new Error("Failed to fetch products");
+        let errorMessage = `Failed to fetch products (HTTP ${response.status})`;
+
+        try {
+          const errorData = await response.json();
+          if (errorData?.message) {
+            errorMessage = errorData.message;
+          }
+        } catch {
+          // Ignore JSON parsing failures and keep status-based message
+        }
+
+        throw new Error(errorMessage);
       }
-      const data = await response.json();
-      setProducts(data.data);
-      setTotalPages(data.pages);
+
+      const data: ProductsResponse | Product[] = await response.json();
+      const productsList = Array.isArray(data) ? data : data.data || [];
+      const pages = Array.isArray(data) ? 1 : data.pages || 1;
+
+      setProducts(productsList);
+      setTotalPages(pages);
       setError(null);
     } catch (err) {
-      setError("Failed to load products");
+      if (err instanceof TypeError) {
+        setError(
+          "Cannot connect to API server. Check VITE_API_URL or make sure the backend is running.",
+        );
+      } else {
+        setError(
+          err instanceof Error ? err.message : "Failed to load products",
+        );
+      }
       console.error(err);
     } finally {
       setLoading(false);
@@ -57,14 +82,29 @@ const ProductsTable = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to delete product");
+        let errorMessage = `Failed to delete product (HTTP ${response.status})`;
+
+        try {
+          const errorData = await response.json();
+          if (errorData?.message) {
+            errorMessage = errorData.message;
+          }
+        } catch {
+          // Ignore JSON parsing failures and keep status-based message
+        }
+
+        throw new Error(errorMessage);
       }
 
       setAlert({ type: "success", message: "Product deleted successfully!" });
       fetchProducts();
     } catch (err) {
       console.error(err);
-      setAlert({ type: "error", message: "Failed to delete product" });
+      setAlert({
+        type: "error",
+        message:
+          err instanceof Error ? err.message : "Failed to delete product",
+      });
     } finally {
       setProductToDelete(null);
     }
@@ -86,7 +126,17 @@ const ProductsTable = () => {
   if (error) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-lg text-red-600">{error}</div>
+        <div className="flex flex-col items-center gap-4">
+          <div className="text-lg text-red-600 text-center max-w-2xl">
+            {error}
+          </div>
+          <button
+            onClick={fetchProducts}
+            className="px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-800 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
       </div>
     );
   }
