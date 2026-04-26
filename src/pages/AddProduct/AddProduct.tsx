@@ -54,7 +54,7 @@ const AddProduct = () => {
     variantIndex: number,
     sizeIndex: number,
     field: string,
-    value: any
+    value: any,
   ) => {
     const newVariants = [...formData.variants];
     const newSizes = [...newVariants[variantIndex].sizes];
@@ -87,7 +87,7 @@ const AddProduct = () => {
   const removeSize = (variantIndex: number, sizeIndex: number) => {
     const newVariants = [...formData.variants];
     newVariants[variantIndex].sizes = newVariants[variantIndex].sizes.filter(
-      (_, i) => i !== sizeIndex
+      (_, i) => i !== sizeIndex,
     );
     setFormData({ ...formData, variants: newVariants });
   };
@@ -187,6 +187,7 @@ const AddProduct = () => {
                 <option value="Pants">Pants</option>
                 <option value="Suit">Suit</option>
                 <option value="Crewneck">Crewneck</option>
+                <option value="T-Shirt">T-Shirt</option>
               </select>
             </div>
           </div>
@@ -318,7 +319,7 @@ const AddProduct = () => {
                             variantIndex,
                             sizeIndex,
                             "name",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                         className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
@@ -339,7 +340,7 @@ const AddProduct = () => {
                             variantIndex,
                             sizeIndex,
                             "quantity",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                         className="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
