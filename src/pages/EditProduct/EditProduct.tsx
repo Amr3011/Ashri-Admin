@@ -85,7 +85,7 @@ const EditProduct = () => {
   const removeImageUrl = (index: number) => {
     // Don't allow removing if it's the last non-empty image
     const nonEmptyImages = formData.imageUrls.filter(
-      (url) => url.trim() !== ""
+      (url) => url.trim() !== "",
     );
     if (nonEmptyImages.length <= 1) {
       setAlert({
@@ -108,7 +108,7 @@ const EditProduct = () => {
     variantIndex: number,
     sizeIndex: number,
     field: string,
-    value: any
+    value: any,
   ) => {
     const newVariants = [...formData.variants];
     const newSizes = [...newVariants[variantIndex].sizes];
@@ -141,7 +141,7 @@ const EditProduct = () => {
   const removeSize = (variantIndex: number, sizeIndex: number) => {
     const newVariants = [...formData.variants];
     newVariants[variantIndex].sizes = newVariants[variantIndex].sizes.filter(
-      (_, i) => i !== sizeIndex
+      (_, i) => i !== sizeIndex,
     );
     setFormData({ ...formData, variants: newVariants });
   };
@@ -152,17 +152,17 @@ const EditProduct = () => {
 
     try {
       const currentImages = formData.imageUrls.filter(
-        (url) => url.trim() !== ""
+        (url) => url.trim() !== "",
       );
 
       // الصور الجديدة فقط (مش موجودة في الصور الأصلية)
       const newImages = currentImages.filter(
-        (img) => !originalImages.includes(img)
+        (img) => !originalImages.includes(img),
       );
 
       // الصور المحذوفة (موجودة في الأصلية ومش موجودة في الحالية)
       const removeImages = originalImages.filter(
-        (img) => !currentImages.includes(img)
+        (img) => !currentImages.includes(img),
       );
 
       const payload = {
@@ -265,6 +265,7 @@ const EditProduct = () => {
                 <option value="Pants">Pants</option>
                 <option value="Suit">Suit</option>
                 <option value="Crewneck">Crewneck</option>
+                <option value="T-Shirt">T-Shirt</option>
               </select>
             </div>
           </div>
@@ -396,7 +397,7 @@ const EditProduct = () => {
                             variantIndex,
                             sizeIndex,
                             "name",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                         className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
@@ -417,7 +418,7 @@ const EditProduct = () => {
                             variantIndex,
                             sizeIndex,
                             "quantity",
-                            e.target.value
+                            e.target.value,
                           )
                         }
                         className="w-32 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
